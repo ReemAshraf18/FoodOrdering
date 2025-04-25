@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://localhost:5000;">
+    <title>Food Blog | Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 16px 0;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .nav-logo a {
+            text-decoration: none;
+            color: #1f2937;
+        }
+        .nav-logo i {
+            color: #3b82f6;
+            margin-right: 8px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .nav-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+        .auth-buttons, .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .auth-buttons a, .user-menu a, .user-menu button {
+            color: #1f2937;
+            text-decoration: none;
+        }
+        .auth-buttons a:last-child, .user-menu button:last-child {
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+        .auth-buttons a:last-child:hover, .user-menu button:last-child:hover {
+            background-color: #2563eb;
+        }
+        .user-menu button i {
+            color: #4b5563;
+        }
+        .user-menu button:hover i {
+            color: #ef4444;
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+        .blog-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+        .blog-image-placeholder {
+            width: 100%;
+            height: 400px;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #9ca3af;
+            font-size: 32px;
+            margin-bottom: 24px;
+        }
+        .blog-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .blog-author span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .blog-tags {
+            display: flex;
+            gap: 8px;
+        }
+        .tag {
+            background-color: #e5e7eb;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            color: #4b5563;
+            cursor: pointer;
+        }
+        .tag:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .blog-body {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .blog-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .blog-actions button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .like-btn {
+            background-color: #e5e7eb;
+            color: #4b5563;
+        }
+        .like-btn.liked {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .comment-btn {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .order-btn {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        .comments-section {
+            margin-top: 32px;
+        }
+        .comments-section h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .comment {
+            border-bottom: 1px solid #d1d5db;
+            padding: 16px 0;
+        }
+        .comment-author {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        .comment-content {
+            color: #4b5563;
+        }
+        .error-message {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 16px;
+            color: #b91c1c;
+            font-size: 14px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border: 4px solid #3b82f6;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html"><i>🍴</i>FoodBlog</a>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="feed.html">My Feed</a>
+                <a href="search.html">Search</a>
+            </div>
+            
+            <div class="auth-buttons" id="auth-buttons">
+                <a href="login.html">Login</a>
+                <a href="register.html">Register</a>
+            </div>
+            
+            <div class="hidden user-menu" id="user-menu">
+                <a href="profile.html">
+                    <span id="username"></span>
+                </a>
+                <button id="logout-btn">[Logout]</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="blog-section" id="blog-section">
+            <div class="text-center py-12">
+                <div class="loading-spinner"></div>
+                <p>Loading blog...</p>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="blog-section comments-section">
+            <h3>Comments</h3>
+            <div id="comments-container">
+                <p>Loading comments...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        const BASE_URL = 'http://localhost:5000/api';
+        const token = localStorage.getItem('token');
+        const authButtons = document.getElementById('auth-buttons');
+        const userMenu = document.getElementById('user-menu');
+        let currentUserId = null;
+        let blogId = new URLSearchParams(window.location.search).get('id');
+
+        // Check if user is logged in
+        if (token) {
+            authButtons.classList.add('hidden');
+            userMenu.classList.remove('hidden');
+
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                currentUserId = payload.id;
+
+                fetch(`${BASE_URL}/users/${currentUserId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch user data');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('username').textContent = data.username;
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                    localStorage.removeItem('token');
+                    window.location.reload();
+                });
+            } catch (error) {
+                console.error('Invalid token:', error);
+                localStorage.removeItem('token');
+                window.location.reload();
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
+
+        // Fetch blog details
+        async function fetchBlog() {
+            try {
+                const response = await fetch(`${BASE_URL}/blogs/${blogId}`);
+                if (!response.ok) throw new Error('Failed to fetch blog');
+                const blog = await response.json();
+
+                const blogSection = document.getElementById('blog-section');
+                blogSection.innerHTML = `
+                    <div class="blog-image-placeholder">
+                        ${blog.photos && blog.photos.length > 0 ? 'Image' : '🍴'}
+                    </div>
+                    <h1 class="blog-title">${blog.title}</h1>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <span>${blog.author.username}</span>
+                        </div>
+                        <div class="blog-tags">
+                            ${blog.tags.map(tag => 
+                                `<span class="tag">${tag}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    <div class="blog-body">${blog.body}</div>
+                    ${token ? `
+                        <div class="blog-actions">
+                            <button class="like-btn" id="like-btn" data-blogid="${blog._id}">Like</button>
+                            <button class="comment-btn" id="comment-btn">Comment</button>
+                            <button class="order-btn" id="order-btn">Order</button>
+                        </div>
+                    ` : ''}
+                `;
+
+                // Check if the blog is liked
+                if (token) {
+                    const likeResponse = await fetch(`${BASE_URL}/likes/${blogId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (likeResponse.ok) {
+                        const likeBtn = document.getElementById('like-btn');
+                        likeBtn.textContent = 'Liked';
+                        likeBtn.classList.add('liked');
+                    }
+
+                    // Add event listeners for buttons
+                    document.getElementById('like-btn').addEventListener('click', async function() {
+                        const isLiked = this.textContent === 'Liked';
+                        const method = isLiked ? 'DELETE' : 'POST';
+
+                        try {
+                            const response = await fetch(`${BASE_URL}/likes/${blogId}`, {
+                                method: method,
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            if (!response.ok) throw new Error('Failed to toggle like');
+                            this.textContent = isLiked ? 'Like' : 'Liked';
+                            this.classList.toggle('liked');
+                        } catch (error) {
+                            console.error('Error toggling like:', error);
+                            alert('Failed to toggle like. Please try again.');
+                        }
+                    });
+
+                    document.getElementById('comment-btn').addEventListener('click', async function() {
+                        const content = prompt('Enter your comment:');
+                        if (!content) return;
+
+                        try {
+                            const response = await fetch(`${BASE_URL}/comments/${blogId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ content })
+                            });
+                            if (!response.ok) throw new Error('Failed to add comment');
+                            alert('Comment added successfully!');
+                            fetchComments();
+                        } catch (error) {
+                            console.error('Error adding comment:', error);
+                            alert('Failed to add comment. Please try again.');
+                        }
+                    });
+
+                    document.getElementById('order-btn').addEventListener('click', async function() {
+                        try {
+                            const response = await fetch(`${BASE_URL}/orders/${blogId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            if (!response.ok) throw new Error('Failed to place order');
+                            alert('Order placed successfully!');
+                        } catch (error) {
+                            console.error('Error placing order:', error);
+                            alert('Failed to place order. Please try again.');
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching blog:', error);
+                document.getElementById('blog-section').innerHTML = `
+                    <div class="error-message">
+                        <p>Failed to load blog. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Fetch comments
+        function fetchComments() {
+            fetch(`${BASE_URL}/comments/${blogId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch comments');
+                return response.json();
+            })
+            .then(comments => {
+                const commentsContainer = document.getElementById('comments-container');
+                commentsContainer.innerHTML = '';
+
+                if (comments.length === 0) {
+                    commentsContainer.innerHTML = '<p>No comments yet.</p>';
+                    return;
+                }
+
+                comments.forEach(comment => {
+                    const commentElement = document.createElement('div');
+                    commentElement.className = 'comment';
+                    commentElement.innerHTML = `
+                        <div class="comment-author">${comment.user.username}</div>
+                        <div class="comment-content">${comment.content}</div>
+                    `;
+                    commentsContainer.appendChild(commentElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching comments:', error);
+                document.getElementById('comments-container').innerHTML = `
+                    <div class="error-message">
+                        <p>Failed to load comments. Please try again later.</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!blogId) {
+                document.getElementById('blog-section').innerHTML = `
+                    <div class="error-message">
+                        <p>No blog ID provided.</p>
+                    </div>
+                `;
+                return;
+            }
+            fetchBlog();
+            fetchComments();
+        });
+    </script>
+</body>
+</html>

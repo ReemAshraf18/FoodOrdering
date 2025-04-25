@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://localhost:5000;">
+    <title>Food Blog | Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 16px 0;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .nav-logo a {
+            text-decoration: none;
+            color: #1f2937;
+        }
+        .nav-logo i {
+            color: #3b82f6;
+            margin-right: 8px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .nav-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+        .auth-buttons, .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .auth-buttons a, .user-menu a, .user-menu button {
+            color: #1f2937;
+            text-decoration: none;
+        }
+        .auth-buttons a:last-child, .user-menu button:last-child {
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+        .auth-buttons a:last-child:hover, .user-menu button:last-child:hover {
+            background-color: #2563eb;
+        }
+        .user-menu button i {
+            color: #4b5563;
+        }
+        .user-menu button:hover i {
+            color: #ef4444;
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+        .search-bar {
+            max-width: 672px;
+            margin: 0 auto 32px;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 12px 48px 12px 24px;
+            border-radius: 9999px;
+            color: #1f2937;
+            outline: none;
+            border: none;
+        }
+        .search-bar input:focus {
+            box-shadow: 0 0 0 2px #60a5fa;
+        }
+        .search-bar button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        .search-bar button:hover {
+            background-color: #1d4ed8;
+        }
+        .search-results h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+        .blog-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .blog-card:hover .blog-title {
+            color: #3b82f6;
+        }
+        .blog-image-placeholder {
+            width: 100%;
+            height: 256px;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #9ca3af;
+            font-size: 24px;
+        }
+        .blog-content {
+            padding: 24px;
+        }
+        .blog-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        .blog-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            background-color: #e5e7eb;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            color: #4b5563;
+            cursor: pointer;
+        }
+        .tag:hover {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .blog-excerpt {
+            color: #4b5563;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            --webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .blog-author span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .blog-read-more {
+            color: #3b82f6;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .blog-read-more:hover {
+            color: #2563eb;
+        }
+        .error-message {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 16px;
+            color: #b91c1c;
+            font-size: 14px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border: 4px solid #3b82f6;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html"><i>🍴</i>FoodBlog</a>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="feed.html">My Feed</a>
+                <a href="search.html">Search</a>
+            </div>
+            
+            <div class="auth-buttons" id="auth-buttons">
+                <a href="login.html">Login</a>
+                <a href="register.html">Register</a>
+            </div>
+            
+            <div class="hidden user-menu" id="user-menu">
+                <a href="profile.html">
+                    <span id="username"></span>
+                </a>
+                <button id="logout-btn">[Logout]</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search for recipes, tags or authors...">
+            <button onclick="search()"><i>🔍</i></button>
+        </div>
+        <div class="search-results">
+            <h2>Search Results</h2>
+            <div id="search-results">
+                <div class="text-center py-12">
+                    <div class="loading-spinner"></div>
+                    <p>Loading results...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        const BASE_URL = 'http://localhost:5000/api';
+        const token = localStorage.getItem('token');
+        const authButtons = document.getElementById('auth-buttons');
+        const userMenu = document.getElementById('user-menu');
+        let currentUserId = null;
+
+        // Check if user is logged in
+        if (token) {
+            authButtons.classList.add('hidden');
+            userMenu.classList.remove('hidden');
+
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                currentUserId = payload.id;
+
+                fetch(`${BASE_URL}/users/${currentUserId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch user data');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('username').textContent = data.username;
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                    localStorage.removeItem('token');
+                    window.location.reload();
+                });
+            } catch (error) {
+                console.error('Invalid token:', error);
+                localStorage.removeItem('token');
+                window.location.reload();
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
+
+        // Search functionality
+        function search() {
+            const query = document.getElementById('search-input').value;
+            if (query) {
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            }
+        }
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+
+        // Fetch search results
+        function fetchSearchResults() {
+            const query = new URLSearchParams(window.location.search).get('q');
+            const tag = new URLSearchParams(window.location.search).get('tag');
+            document.getElementById('search-input').value = query || tag || '';
+
+            if (!query && !tag) {
+                document.getElementById('search-results').innerHTML = `
+                    <div class="error-message">
+                        <p>Please enter a search query or select a tag.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const url = query ? `${BASE_URL}/blogs/search?q=${encodeURIComponent(query)}` : `${BASE_URL}/blogs/search?q=${encodeURIComponent(tag)}`;
+            fetch(url, {
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch search results');
+                return response.json();
+            })
+            .then(blogs => {
+                const resultsContainer = document.getElementById('search-results');
+                resultsContainer.innerHTML = '';
+
+                if (blogs.length === 0) {
+                    resultsContainer.innerHTML = '<p class="text-center py-12 text-gray-500">No results found.</p>';
+                    return;
+                }
+
+                blogs.forEach(blog => {
+                    const blogElement = document.createElement('div');
+                    blogElement.className = 'blog-card';
+                    blogElement.innerHTML = `
+                        <div class="blog-image-placeholder">
+                            ${blog.photos && blog.photos.length > 0 ? 'Image' : '🍴'}
+                        </div>
+                        <div class="blog-content">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="blog-title">${blog.title}</h3>
+                                <div class="blog-tags">
+                                    ${blog.tags.map(tag => 
+                                        `<span class="tag">${tag}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            <p class="blog-excerpt">${blog.body.substring(0, 200)}...</p>
+                            <div class="blog-meta">
+                                <div class="blog-author">
+                                    <span>${blog.author.username}</span>
+                                </div>
+                                <a href="blog.html?id=${blog._id}" class="blog-read-more">Read More →</a>
+                            </div>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(blogElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching search results:', error);
+                document.getElementById('search-results').innerHTML = `
+                    <div class="error-message">
+                        <p>Failed to load search results. Please try again later.</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchSearchResults();
+        });
+    </script>
+</body>
+</html>

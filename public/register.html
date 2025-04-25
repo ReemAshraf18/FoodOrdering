@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://localhost:5000;">
+    <title>Food Blog | Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 16px 0;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .nav-logo a {
+            text-decoration: none;
+            color: #1f2937;
+        }
+        .nav-logo i {
+            color: #3b82f6;
+            margin-right: 8px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .nav-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+        .auth-buttons, .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .auth-buttons a, .user-menu a, .user-menu button {
+            color: #1f2937;
+            text-decoration: none;
+        }
+        .auth-buttons a:last-child, .user-menu button:last-child {
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+        .auth-buttons a:last-child:hover, .user-menu button:last-child:hover {
+            background-color: #2563eb;
+        }
+        .user-menu button i {
+            color: #4b5563;
+        }
+        .user-menu button:hover i {
+            color: #ef4444;
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: center;
+        }
+        .register-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .register-section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #1f2937;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #60a5fa;
+        }
+        .register-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3b82f6;
+            color: #ffffff;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .register-btn:hover {
+            background-color: #2563eb;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        .login-link a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            color: #2563eb;
+        }
+        .error-message {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 16px;
+            color: #b91c1c;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html"><i>🍴</i>FoodBlog</a>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="feed.html">My Feed</a>
+                <a href="search.html">Search</a>
+            </div>
+            
+            <div class="auth-buttons" id="auth-buttons">
+                <a href="login.html">Login</a>
+                <a href="register.html">Register</a>
+            </div>
+            
+            <div class="hidden user-menu" id="user-menu">
+                <a href="profile.html">
+                    <span id="username"></span>
+                </a>
+                <button id="logout-btn">[Logout]</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="register-section">
+            <h2>Register</h2>
+            <div id="error-message" class="error-message"></div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role">
+                    <option value="Client">Client</option>
+                    <option value="Vendor">Vendor</option>
+                </select>
+            </div>
+            <button class="register-btn" onclick="register()">Register</button>
+            <p class="login-link">Already have an account? <a href="login.html">Login</a></p>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        const BASE_URL = 'http://localhost:5000/api';
+        const token = localStorage.getItem('token');
+        const authButtons = document.getElementById('auth-buttons');
+        const userMenu = document.getElementById('user-menu');
+        let currentUserId = null;
+
+        // Check if user is logged in
+        if (token) {
+            authButtons.classList.add('hidden');
+            userMenu.classList.remove('hidden');
+
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                currentUserId = payload.id;
+
+                fetch(`${BASE_URL}/users/${currentUserId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch user data');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('username').textContent = data.username;
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                    localStorage.removeItem('token');
+                    window.location.reload();
+                });
+            } catch (error) {
+                console.error('Invalid token:', error);
+                localStorage.removeItem('token');
+                window.location.reload();
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
+
+        // Register functionality
+        function register() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (!username || !email || !password || !role) {
+                errorMessage.textContent = 'Please fill in all fields.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            fetch(`${BASE_URL}/users/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password, role })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Failed to register'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                localStorage.setItem('token', data.token);
+                window.location.href = 'index.html';
+            })
+            .catch(error => {
+                console.error('Error registering:', error);
+                errorMessage.textContent = error.message || 'Failed to register. Please try again.';
+                errorMessage.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>
