@@ -25,12 +25,10 @@ router.get('/tags/popular', async (req, res) => {
 router.post('/', auth, restrictTo('Vendor'), upload.array('photos', 5), createBlog);
 router.put('/:id', auth, restrictTo('Vendor'), upload.array('photos', 5), updateBlog);
 router.delete('/:id', auth, restrictTo('Vendor'), deleteBlog);
-router.get('/', getBlogs);
+router.get('/search', auth, searchBlogs);
 router.get('/:id', getBlog);
-router.get('/search', (req, res, next) => {
-  const { auth } = require('../middleware/auth');
-  auth(req, res, searchBlogs);
-});
+router.get('/', getBlogs);
+
 
 router.delete('/:blogId/photos/:photoPath', 
   auth,

@@ -194,16 +194,18 @@ const searchBlogs = async (req, res) => {
   if (!q) return res.status(400).json({ message: 'Query is required' });
 
   try {
-    const users = await User.find({ username: { $regex: q, $options: 'i' } }).select('_id');
+    const regex = new RegExp(q, 'i'); 
+    const users = await User.find({ username: regex }).select('_id');
     const userIds = users.map(user => user._id);
 
     const blogs = await Blog.find({
       $or: [
-        { title: { $regex: q, $options: 'i' } },
-        { tags: { $regex: q, $options: 'i' } },
+        { title: { $regex: regex } },
+        { tags: { $regex: regex } },
         { author: { $in: userIds } }
       ]
     }).populate('author', 'username');
+    
     res.json(blogs);
   } catch (err) {
     res.status(500).json({ message: err.message });
